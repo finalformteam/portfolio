@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Портфолио — Минимал</title>
+  <meta name="description" content="Адаптивное портфолио: превью картинок и YouTube-видео. Чистый HTML/CSS/JS, без CMS." />
+
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --accent:#7dd3fc; --muted:#94a3b8; --gap:18px;
+      --radius:14px; --max-width:1200px;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;padding:32px; background:linear-gradient(180deg,#071029 0%, var(--bg) 100%); color:#e6eef8;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; display:flex; justify-content:center;
+    }
+
+    .wrap{width:100%; max-width:var(--max-width)}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:22px}
+    .brand{display:flex;flex-direction:column}
+    .brand h1{font-size:20px;margin:0}
+    .brand p{margin:0;color:var(--muted);font-size:13px}
+
+    /* Grid */
+    .grid{
+      display:grid; gap:var(--gap);
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width:980px){ .grid{grid-template-columns:repeat(2,1fr);} }
+    @media (max-width:560px){ .grid{grid-template-columns:1fr;} body{padding:18px} }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--radius); overflow:hidden; position:relative; cursor:pointer; min-height:160px;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow: 0 6px 20px rgba(2,6,23,0.6);
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    .card:focus{outline:3px solid rgba(125,211,252,0.13)}
+    .card:hover{transform:translateY(-6px)}
+
+    .thumb{
+      width:100%; height:100%; object-fit:cover; display:block; aspect-ratio:16/9;
+    }
+    .meta{
+      position:absolute;left:10px;bottom:10px;background:rgba(2,6,23,0.6);padding:8px 10px;border-radius:10px;font-size:13px;color:var(--muted);
+      display:flex;gap:8px;align-items:center
+    }
+
+    /* Modal / Lightbox */
+    .modal{
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:9999; padding:30px;
+      background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.85));
+    }
+    .modal.open{display:flex}
+    .viewer{
+      width:100%; max-width:1200px; max-height:92vh; background:var(--card); border-radius:12px; overflow:hidden; position:relative;
+      box-shadow:0 18px 50px rgba(2,6,23,0.8);
+    }
+    .viewer-inner{display:flex;align-items:center;justify-content:center;height:100%;}
+    .viewer img{max-width:100%; max-height:92vh; width:auto; height:auto; display:block}
+    .viewer iframe{width:100%; height:56.25vw; max-height:78vh; border:0; display:block}
+
+    /* controls */
+    .controls{position:absolute;right:12px;top:12px;display:flex;gap:8px}
+    .btn{background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:10px;color:var(--accent);cursor:pointer}
+    .btn:hover{transform:scale(1.03)}
+
+    /* Prev/Next handles */
+    .nav-area{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
+    .nav-area button{pointer-events:all;background:transparent;border:0;font-size:36px;color:rgba(255,255,255,0.12);padding:20px;cursor:pointer}
+    .nav-area button:hover{color:rgba(255,255,255,0.24)}
+
+    /* caption */
+    .caption{padding:14px 18px;color:var(--muted);font-size:14px;border-top:1px solid rgba(255,255,255,0.02)}
+
+    /* small helper */
+    .hint{color:var(--muted);font-size:13px;margin-top:8px}
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <h1>Портфолио</h1>
+        <p>Чистый HTML/CSS/JS — превью изображений и YouTube-видео, адаптивно</p>
+      </div>
+    </header>
+
+    <main>
+      <div class="grid" id="gallery">
+        <!-- Пример карточек: заполните своими данными -->
+        <!-- image: data-type="image" data-src="/path/to/big.jpg" -->
+        <!-- video: data-type="video" data-src="YOUTUBE_ID" -->
+
+        <button class="card" data-type="image" data-src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=1600&auto=format&fit=crop" aria-label="Открыть изображение 1">
+          <img class="thumb" loading="lazy" alt="Гора" src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=800&auto=format&fit=crop">
+          <div class="meta">Фото — Горы</div>
+        </button>
+
+        <button class="card" data-type="video" data-src="dQw4w9WgXcQ" aria-label="Открыть видео 1">
+          <!-- можно использовать статичный скриншот (YouTube thumbnail) -->
+          <img class="thumb" loading="lazy" alt="YouTube preview" src="https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg">
+          <div class="meta">Видео — YouTube</div>
+        </button>
+
+	<button class="card" data-type="video" data-src="https://youtu.be/z1aP2R4j9vI">
+ 	 <img class="thumb" src="https://img.youtube.com/vi/z1aP2R4j9vI/hqdefault.jpg" alt="Daft Punk - Get Lucky">
+ 	 <div class="meta">Видео — Daft Punk</div>
+	</button>
+
+        <button class="card" data-type="image" data-src="https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1600&auto=format&fit=crop" aria-label="Открыть изображение 2">
+          <img class="thumb" loading="lazy" alt="Город" src="https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=800&auto=format&fit=crop">
+          <div class="meta">Фото — Город</div>
+        </button>
+
+        <!-- Добавьте сколько угодно карточек -->
+      </div>
+
+      <div class="hint">Подсказка: кликните на карточку — откроется полноэкранное окно. Используйте стрелки ← → и Esc.</div>
+    </main>
+  </div>
+
+  <!-- Modal / Lightbox -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="viewer" role="document">
+      <div class="controls">
+        <button id="openOriginal" class="btn" title="Открыть в новой вкладке">Открыть</button>
+        <button id="closeBtn" class="btn" title="Закрыть">✕</button>
+      </div>
+
+      <div class="viewer-inner" id="viewerInner">
+        <!-- content inserted dynamically: <img> или <iframe> -->
+      </div>
+
+      <div class="caption" id="caption"></div>
+
+      <div class="nav-area">
+        <button id="prevBtn" aria-label="Предыдущее">‹</button>
+        <button id="nextBtn" aria-label="Следующее">›</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const gallery = Array.from(document.querySelectorAll('#gallery .card'));
+      const modal = document.getElementById('modal');
+      const viewerInner = document.getElementById('viewerInner');
+      const caption = document.getElementById('caption');
+      const closeBtn = document.getElementById('closeBtn');
+      const openOriginal = document.getElementById('openOriginal');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      let currentIndex = -1;
+
+      function openAt(index){
+        const card = gallery[index];
+        if(!card) return;
+        currentIndex = index;
+        const type = card.dataset.type;
+        const src = card.dataset.src;
+        const alt = card.querySelector('.thumb')?.alt || '';
+
+        // clear previous
+        viewerInner.innerHTML = '';
+
+        if(type === 'image'){
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = alt;
+          img.loading = 'eager';
+          viewerInner.appendChild(img);
+          openOriginal.onclick = ()=> window.open(src, '_blank');
+          caption.textContent = alt || 'Изображение';
+        } else if(type === 'video'){
+          // src is expected to be a YouTube ID. Support if full url is provided.
+          let id = src;
+          try{
+            const url = new URL(src);
+            // try to extract ID from typical youtube urls
+            if(url.hostname.includes('youtube.com')){
+              if(url.pathname.startsWith('/shorts/')) id = url.pathname.split('/').pop();
+              else id = url.searchParams.get('v') || id;
+            } else if(url.hostname === 'youtu.be'){
+              id = url.pathname.slice(1);
+            }
+          }catch(e){ /* not a url, assume id */ }
+
+          const iframe = document.createElement('iframe');
+          iframe.src = `https://www.youtube.com/embed/${id}?rel=0&autoplay=1&modestbranding=1`;
+          iframe.title = alt || 'YouTube video player';
+          iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+          iframe.allowFullscreen = true;
+          viewerInner.appendChild(iframe);
+          openOriginal.onclick = ()=> window.open(`https://youtu.be/${id}`, '_blank');
+          caption.textContent = 'Видео — YouTube';
+        }
+
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden','false');
+        // focus management
+        closeBtn.focus();
+      }
+
+      function closeModal(){
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden','true');
+        viewerInner.innerHTML = '';
+        currentIndex = -1;
+      }
+
+      // Click handlers for gallery
+      gallery.forEach((card, i)=>{
+        card.addEventListener('click', ()=> openAt(i));
+        card.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAt(i); } });
+      });
+
+      closeBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+
+      // keyboard
+      document.addEventListener('keydown', (e)=>{
+        if(modal.classList.contains('open')){
+          if(e.key === 'Escape') closeModal();
+          if(e.key === 'ArrowRight') navigate(1);
+          if(e.key === 'ArrowLeft') navigate(-1);
+        }
+      });
+
+      function navigate(dir){
+        if(currentIndex === -1) return;
+        let next = currentIndex + dir;
+        if(next < 0) next = gallery.length -1;
+        if(next >= gallery.length) next = 0;
+        openAt(next);
+      }
+      prevBtn.addEventListener('click', ()=> navigate(-1));
+      nextBtn.addEventListener('click', ()=> navigate(1));
+
+      // Accessibility: trap focus inside modal while open (lightweight)
+      modal.addEventListener('keydown', (e)=>{
+        if(e.key !== 'Tab') return;
+        const focusables = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        const first = focusables[0];
+        const last = focusables[focusables.length-1];
+        if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+        if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+      });
+
+      // Make gallery array reactive if user adds new cards later
+      const observer = new MutationObserver(()=>{
+        const updated = Array.from(document.querySelectorAll('#gallery .card'));
+        if(updated.length !== gallery.length){
+          // replace content of gallery array (simple approach)
+          gallery.length = 0; updated.forEach(g=>gallery.push(g));
+          // attach click handlers to new ones
+          gallery.forEach((card, i)=>{
+            if(!card._bound){
+              card.addEventListener('click', ()=> openAt(i));
+              card.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAt(i); } });
+              card._bound = true;
+            }
+          });
+        }
+      });
+      observer.observe(document.getElementById('gallery'), {childList:true, subtree:false});
+
+      // small UX: close on resize if mobile becomes too small
+      window.addEventListener('resize', ()=>{ if(window.innerWidth < 420 && modal.classList.contains('open')){ /* do nothing, keep open */ } });
+
+    })();
+  </script>
+</body>
+</html>
